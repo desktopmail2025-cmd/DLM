@@ -156,6 +156,7 @@ class HomeFragment : Fragment() {
             }
             card.addView(done)
         }
+        card.setOnClickListener { showAddDialog(entry) }
         card.setOnLongClickListener {
             MaterialAlertDialogBuilder(requireContext()).setMessage("Delete this item?")
                 .setNegativeButton("Cancel", null)
@@ -312,15 +313,16 @@ class HomeFragment : Fragment() {
         return out.toByteArray()
     }
 
-    private fun showAddDialog() {
+    private fun showAddDialog(existing: DlmEntry? = null) {
         val box = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(22, 8, 22, 0)
         }
         val title = EditText(requireContext()).apply {
             hint = when (section) { "STUDY" -> "Task title"; "TUITION" -> "Student / tuition title"; else -> "Transaction title" }
+            setText(existing?.title.orEmpty())
         }
-        val detail = EditText(requireContext()).apply { hint = "Note (optional)" }
+        val detail = EditText(requireContext()).apply { hint = "Note (optional)"; setText(existing?.details.orEmpty()) }
         val amount = if (section != "STUDY") EditText(requireContext()).apply {
             hint = if (section == "MONEY") "Amount" else "Fee / payment amount"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -328,19 +330,30 @@ class HomeFragment : Fragment() {
         val type = if (section != "STUDY") Spinner(requireContext()).apply {
             val choices = if (section == "MONEY") listOf("Expense", "Income") else listOf("Fee", "Paid")
             adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, choices)
+            val selected = when (existing?.type) { "INCOME", "PAID" -> 1; else -> 0 }
+            setSelection(selected)
         } else null
         box.addView(title); box.addView(detail); type?.let { box.addView(it) }; amount?.let { box.addView(it) }
-        MaterialAlertDialogBuilder(requireContext()).setTitle("Add new item").setView(box)
+        MaterialAlertDialogBuilder(requireContext()).setTitle(if (existing == null) "Add new item" else "Edit item").setView(box)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Save") { _, _ ->
                 val name = title.text.toString().trim()
                 if (name.isNotEmpty()) {
-                    val value = amount?.text?.toString()?.toDoubleOrNull() ?: 0.0
+                    val parsedAmount = amount?.text?.toString()?.toDoubleOrNull() ?: 0.0
+                    if (amount != null && (parsedAmount <= 0.0 || !parsedAmount.isFinite())) {
+                        android.widget.Toast.makeText(requireContext(), "Enter a valid amount greater than zero.", android.widget.Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    val value = parsedAmount
                     val selectedType = when (type?.selectedItem?.toString()) {
                         "Income" -> "INCOME"; "Fee" -> "FEE"; "Paid" -> "PAID"; else -> if (section == "MONEY") "EXPENSE" else "GENERAL"
                     }
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                        dao.insert(DlmEntry(section = section, title = name, details = detail.text.toString().trim(), amount = value, type = selectedType))
+                        if (existing == null) {
+                            dao.insert(DlmEntry(section = section, title = name, details = detail.text.toString().trim(), amount = value, type = selectedType))
+                        } else {
+                            dao.update(existing.copy(title = name, details = detail.text.toString().trim(), amount = value, type = selectedType))
+                        }
                     }
                 }
             }.show()
