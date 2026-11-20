@@ -1,4 +1,5 @@
-name: Build DLM Native Android APK\nrun-name: Validate Native DLM APK
+name: Build DLM Native Android APK
+run-name: Validate Native DLM APK
 
 on:
   push:
