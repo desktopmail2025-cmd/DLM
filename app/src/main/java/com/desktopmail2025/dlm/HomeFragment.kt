@@ -175,7 +175,7 @@ class HomeFragment : Fragment() {
             .setItems(options) { _, which ->
                 val now = Calendar.getInstance()
                 when (which) {
-                    0 -> exportFor(now.timeInMillis.also { now.set(Calendar.HOUR_OF_DAY, 0); now.set(Calendar.MINUTE, 0); now.set(Calendar.SECOND, 0) }, now.timeInMillis + 86_399_999L)
+                    0 -> {\n                        now.set(Calendar.HOUR_OF_DAY, 0); now.set(Calendar.MINUTE, 0); now.set(Calendar.SECOND, 0); now.set(Calendar.MILLISECOND, 0)\n                        val start = now.timeInMillis\n                        exportFor(start, start + 86_399_999L)\n                    }
                     1 -> {
                         now.set(Calendar.DAY_OF_MONTH, 1); now.set(Calendar.HOUR_OF_DAY, 0); now.set(Calendar.MINUTE, 0); now.set(Calendar.SECOND, 0)
                         val start = now.timeInMillis
