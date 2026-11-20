@@ -7,5 +7,13 @@
         <item name="android:statusBarColor">#03045E</item>
         <item name="android:navigationBarColor">#03045E</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">#F4F7FC</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#03045E</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/dlm_icon</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+        <item name="android:windowBackground">#03045E</item>
     </style>
 </resources>
