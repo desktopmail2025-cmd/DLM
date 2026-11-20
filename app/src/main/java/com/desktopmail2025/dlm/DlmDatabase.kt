@@ -94,6 +94,8 @@ interface DlmDao {
     @Insert suspend fun addSubject(subject: StudySubject): Long
     @Update suspend fun updateSubject(subject: StudySubject)
     @Query("DELETE FROM study_subjects WHERE id = :id") suspend fun deleteSubject(id: Long)
+    @Query("DELETE FROM study_topics WHERE subjectId = :subjectId") suspend fun deleteSubjectTopics(subjectId: Long)
+    @Query("DELETE FROM study_notes WHERE subjectId = :subjectId") suspend fun deleteSubjectNotes(subjectId: Long)
     @Query("SELECT * FROM study_topics WHERE subjectId = :subjectId ORDER BY createdAt") fun topics(subjectId: Long): Flow<List<StudyTopic>>
     @Insert suspend fun addTopic(topic: StudyTopic)
     @Update suspend fun updateTopic(topic: StudyTopic)
