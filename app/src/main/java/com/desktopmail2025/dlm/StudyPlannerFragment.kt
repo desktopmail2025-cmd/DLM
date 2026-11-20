@@ -45,7 +45,7 @@ class StudyPlannerFragment : Fragment() {
                 c.addView(label("Tap Open to manage topics and revision notes.",13,false))
                 c.addView(button("Open"){ selected=s; observe(s.id); render() })
                 c.addView(button("Edit"){ editSubject(s) })
-                c.addView(button("Delete"){ MaterialAlertDialogBuilder(requireContext()).setMessage("Delete this subject and all its study data?").setNegativeButton("Cancel",null).setPositiveButton("Delete"){_,_-> viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO){ topics.filter{it.subjectId==s.id}.forEach{dao.deleteTopic(it.id)}; notes.filter{it.subjectId==s.id}.forEach{dao.deleteStudyNote(it.id)}; dao.deleteSubject(s.id) } }.show() })
+                c.addView(button("Delete"){ MaterialAlertDialogBuilder(requireContext()).setMessage("Delete this subject and all its study data?").setNegativeButton("Cancel",null).setPositiveButton("Delete"){_,_-> viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO){ dao.deleteSubjectTopics(s.id); dao.deleteSubjectNotes(s.id); dao.deleteSubject(s.id) } }.show() })
                 root.addView(c)
             }
         } else {
