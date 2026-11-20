@@ -86,6 +86,7 @@ class HomeFragment : Fragment() {
         root.addView(summary)
         root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
         root.addView(export, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = 6 })
+        if (section == "MONEY") root.addView(MaterialButton(requireContext()).apply { text = "Monthly budget & currency"; setOnClickListener { showBudgetDialog() } })
         root.addView(add, LinearLayout.LayoutParams(-1, -2))
         return root
     }
@@ -311,6 +312,19 @@ class HomeFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         bitmap.recycle()
         return out.toByteArray()
+    }
+
+    private fun showBudgetDialog() {
+        val prefs = requireContext().getSharedPreferences("dlm_money", android.content.Context.MODE_PRIVATE)
+        val box = LinearLayout(requireContext()).apply { orientation = LinearLayout.VERTICAL; setPadding(22, 8, 22, 0) }
+        val budget = EditText(requireContext()).apply { hint = "Monthly spending limit (0 = none)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL; setText(prefs.getFloat("budget", 0f).takeIf { it > 0f }?.toString().orEmpty()) }
+        val currency = EditText(requireContext()).apply { hint = "Currency symbol (e.g. ৳, $, €)"; setText(prefs.getString("currency", "৳")) }
+        box.addView(budget); box.addView(currency)
+        MaterialAlertDialogBuilder(requireContext()).setTitle("Money settings").setView(box).setNegativeButton("Cancel", null).setPositiveButton("Save") { _, _ ->
+            val amount = budget.text.toString().toFloatOrNull() ?: 0f
+            if (amount >= 0f) prefs.edit().putFloat("budget", amount).putString("currency", currency.text.toString().trim().ifBlank { "৳" }.take(3)).apply()
+            android.widget.Toast.makeText(requireContext(), "Money settings saved.", android.widget.Toast.LENGTH_SHORT).show()
+        }.show()
     }
 
     private fun showAddDialog(existing: DlmEntry? = null) {
