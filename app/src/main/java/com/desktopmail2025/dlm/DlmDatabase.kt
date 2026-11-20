@@ -107,6 +107,7 @@ interface DlmDao {
     @Update suspend fun updateTuition(profile: TuitionProfile)
     @Query("DELETE FROM tuition_profiles WHERE id = :id") suspend fun deleteTuition(id: Long)
     @Query("SELECT * FROM tuition_days WHERE tuitionId = :tuitionId AND day BETWEEN :from AND :to ORDER BY day") fun tuitionDays(tuitionId: Long, from: Long, to: Long): Flow<List<TuitionDay>>
+    @Query("DELETE FROM tuition_days WHERE tuitionId = :tuitionId") suspend fun deleteTuitionDays(tuitionId: Long)
     @Query("SELECT * FROM tuition_days WHERE tuitionId = :tuitionId AND day = :day LIMIT 1") suspend fun tuitionDay(tuitionId: Long, day: Long): TuitionDay?
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun saveTuitionDay(day: TuitionDay)
     @Query("DELETE FROM tuition_days WHERE id = :id") suspend fun deleteTuitionDay(id: Long)
