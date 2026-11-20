@@ -39,6 +39,11 @@ jobs:
           test -d "$ANDROID_HOME/platforms/android-35" || { echo "Android SDK platform 35 is missing on this runner"; exit 1; }
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
+      - name: Prepare launcher icon
+        run: |
+          mkdir -p app/src/main/res/drawable-nodpi
+          base64 --decode app/src/main/assets/dlm_icon.jpg.base64 > app/src/main/res/drawable-nodpi/dlm_icon.jpg
+
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
 
