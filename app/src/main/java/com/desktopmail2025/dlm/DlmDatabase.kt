@@ -30,6 +30,9 @@ interface DlmDao {
     @Query("SELECT * FROM entries WHERE section = :section ORDER BY createdAt DESC")
     fun entries(section: String): Flow<List<DlmEntry>>
 
+    @Query("SELECT * FROM entries WHERE section = :section AND createdAt BETWEEN :from AND :to ORDER BY createdAt ASC")
+    suspend fun entriesBetween(section: String, from: Long, to: Long): List<DlmEntry>
+
     @Insert
     suspend fun insert(entry: DlmEntry)
 
