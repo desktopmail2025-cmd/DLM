@@ -40,7 +40,7 @@ class TuitionTrackerFragment : Fragment() {
                 val c=card();c.addView(label(p.name,18,true));if(p.teacher.isNotBlank())c.addView(label("Teacher: "+p.teacher,13,false));c.addView(label("Monthly fee: "+money(p.monthlyFee),14,false))
                 c.addView(button("Open attendance"){selected=p;observeMonth();render()})
                 c.addView(button("Edit"){editProfile(p)})
-                c.addView(button("Delete"){MaterialAlertDialogBuilder(requireContext()).setMessage("Delete this tuition and all attendance history?").setNegativeButton("Cancel",null).setPositiveButton("Delete"){_,_->viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO){dao.tuitionDays(p.id,0L,Long.MAX_VALUE).collect{};dao.deleteTuition(p.id)}}.show()})
+                c.addView(button("Delete"){MaterialAlertDialogBuilder(requireContext()).setMessage("Delete this tuition and all attendance history?").setNegativeButton("Cancel",null).setPositiveButton("Delete"){_,_->viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO){dao.deleteTuitionDays(p.id);dao.deleteTuition(p.id)}}.show()})
                 root.addView(c)
             }
         }else{
