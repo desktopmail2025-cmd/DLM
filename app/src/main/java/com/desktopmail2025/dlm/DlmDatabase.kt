@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -35,6 +36,9 @@ interface DlmDao {
 
     @Insert
     suspend fun insert(entry: DlmEntry)
+
+    @Update
+    suspend fun update(entry: DlmEntry)
 
     @Query("DELETE FROM entries WHERE id = :id")
     suspend fun delete(id: Long)
