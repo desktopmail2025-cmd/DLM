@@ -333,7 +333,12 @@ class HomeFragment : Fragment() {
             val selected = when (existing?.type) { "INCOME", "PAID" -> 1; else -> 0 }
             setSelection(selected)
         } else null
-        box.addView(title); box.addView(detail); type?.let { box.addView(it) }; amount?.let { box.addView(it) }
+        val category = if (section == "MONEY") Spinner(requireContext()).apply {
+            val choices = listOf("Food", "Transport", "Rent", "Shopping", "Bills", "Health", "Education", "Salary", "Freelance", "Gift", "Other")
+            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, choices)
+            setSelection(choices.indexOf(existing?.category).let { if (it < 0) choices.lastIndex else it })
+        } else null
+        box.addView(title); box.addView(detail); type?.let { box.addView(it) }; category?.let { box.addView(it) }; amount?.let { box.addView(it) }
         MaterialAlertDialogBuilder(requireContext()).setTitle(if (existing == null) "Add new item" else "Edit item").setView(box)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Save") { _, _ ->
@@ -350,9 +355,9 @@ class HomeFragment : Fragment() {
                     }
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                         if (existing == null) {
-                            dao.insert(DlmEntry(section = section, title = name, details = detail.text.toString().trim(), amount = value, type = selectedType))
+                            dao.insert(DlmEntry(section = section, title = name, details = detail.text.toString().trim(), amount = value, type = selectedType, category = category?.selectedItem?.toString() ?: "Other"))
                         } else {
-                            dao.update(existing.copy(title = name, details = detail.text.toString().trim(), amount = value, type = selectedType))
+                            dao.update(existing.copy(title = name, details = detail.text.toString().trim(), amount = value, type = selectedType, category = category?.selectedItem?.toString() ?: existing.category))
                         }
                     }
                 }
