@@ -1,5 +1,5 @@
 name: Build DLM Native Android APK
-run-name: Validate Native DLM APK
+run-name: Build DLM APK (Room database)
 
 on:
   push:
@@ -39,6 +39,9 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           test -d "$ANDROID_HOME/platforms/android-35" || { echo "Android SDK platform 35 is missing on this runner"; exit 1; }
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+
+      - name: Verify Room database source
+        run: test -f app/src/main/java/com/desktopmail2025/dlm/DlmDatabase.kt
 
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
