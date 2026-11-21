@@ -115,6 +115,6 @@ class StudyPlannerFragment : Fragment() {
         }.show()
     }
     private fun card()=LinearLayout(requireContext()).apply{orientation=LinearLayout.VERTICAL;setPadding(14,12,14,10);background=android.graphics.drawable.GradientDrawable().apply{setColor(-1);cornerRadius=22f};elevation=2f;layoutParams=LinearLayout.LayoutParams(-1,-2).apply{bottomMargin=12}}
-    private fun label(s:String,size:Float,bold:Boolean)=TextView(requireContext()).apply{text=s;textSize=size;setTextColor(0xFF102A43.toInt());if(bold)typeface=android.graphics.Typeface.DEFAULT_BOLD;setPadding(4,6,4,6)}
+    private fun label(s:String,size:Int,bold:Boolean)=TextView(requireContext()).apply{text=s;textSize=size.toFloat();setTextColor(0xFF102A43.toInt());if(bold)typeface=android.graphics.Typeface.DEFAULT_BOLD;setPadding(4,6,4,6)}
     private fun button(s:String,run:()->Unit)=MaterialButton(requireContext()).apply{text=s;setOnClickListener{run()}}
 }
